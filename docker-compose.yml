@@ -1,0 +1,66 @@
+services:
+  mysql:
+    image: mariadb:10.11
+    container_name: cw_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: watchman
+      MYSQL_USER: watchman
+      MYSQL_PASSWORD: watchmanpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: cw_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  cassandra:
+    image: cassandra:4.1
+    container_name: cw_cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    environment:
+      CASSANDRA_START_RPC: 'true'
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe cluster"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  rabbitmq_data:
+  cassandra_data:
+
+# Notes:
+# - Default credentials above are for local development only. Do NOT use them in production.
+# - If you prefer Cassandra-compatible ScyllaDB, replace the cassandra service image with scylladb/scylla and adjust ports/healthchecks.
+# - To start services (requires Docker):
+#     docker compose up -d
+# - To stop and remove containers/volumes:
+#     docker compose down -v
