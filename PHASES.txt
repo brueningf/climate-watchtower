@@ -5,7 +5,7 @@ Phase 1 — Backend foundation
 - Create a docker-compose.yml with: RabbitMQ, Timescale (Postgres). (done - docker-compose includes RabbitMQ and TimescaleDB)
 - Implement modules:
   - ingestion → RabbitMQ listener to consume weather events (JSON payloads) (done)
-  - audit → Timescaledb repository to store immutable JSON events (done)
+  - audit → TimescaleDB repository to store immutable JSON events (done)
   - processing → simple anomaly detection comparing values to configured thresholds
   - alerts → RabbitMQ producer sending anomaly messages to an alert queue
   - results → DB persistence for alert summaries (JPA)
@@ -27,7 +27,7 @@ Phase 2 — Frontend integration
 
 Phase 3 — CI/CD and improvements
 - Add Gradle task to build frontend automatically and copy artifacts.
-- Add CI (GitHub Actions) to run tests and build Docker image.
+- Add CI (GitHub Actions or similar) to run tests and build Docker image.
 - Add integration tests for event flow: Publish test event → detect anomaly → verify alert persisted.
 
 Future enhancements
