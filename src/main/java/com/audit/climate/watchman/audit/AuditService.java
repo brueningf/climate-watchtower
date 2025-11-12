@@ -13,9 +13,9 @@ public class AuditService {
         this.repository = repository;
     }
 
-    public void persistRawEvent(String jsonPayload) {
+    public void persistRawEvent(String module, double temperature, double humidity, double pressure) {
         try {
-            RawEvent e = new RawEvent(jsonPayload);
+            RawEvent e = new RawEvent(module, temperature, humidity, pressure);
             repository.save(e);
             log.debug("Persisted raw event id={}", e.getId());
         } catch (Exception ex) {
@@ -24,4 +24,3 @@ public class AuditService {
         }
     }
 }
-

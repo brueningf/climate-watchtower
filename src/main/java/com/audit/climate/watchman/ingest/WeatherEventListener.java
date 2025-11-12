@@ -32,21 +32,24 @@ public class WeatherEventListener {
     public void onMessage(String payload) {
         log.debug("Received raw message: {}", payload);
 
-        // Persist raw payload for auditability; failures here should be logged but not crash the listener
-        try {
-            auditService.persistRawEvent(payload);
-        } catch (Exception ex) {
-            log.error("Failed to persist raw event", ex);
-        }
-
         // Try to parse into typed event and publish for processing
         try {
             WeatherEvent event = objectMapper.readValue(payload, WeatherEvent.class);
             log.debug("Parsed WeatherEvent: {}", event);
+
+            try {
+                String module = event.getModule();
+                if (module == null || module.isBlank()) {
+                    module = "unknown";
+                }
+                auditService.persistRawEvent(module, event.getTemperature(), event.getHumidity(), event.getPressure());
+            } catch (Exception ex) {
+                log.error("Failed to persist raw event", ex);
+            }
+
             publisher.publishEvent(event);
         } catch (Exception ex) {
             log.warn("Failed to deserialize payload into WeatherEvent; skipping processing publish", ex);
         }
     }
 }
-

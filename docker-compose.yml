@@ -37,8 +37,6 @@ services:
     restart: unless-stopped
 
   timescaledb:
-    # Use a Timescale image based on PostgreSQL 15 to ensure compatibility with the Flyway version
-    # currently pinned in build.gradle. This avoids the 'Unsupported Database: PostgreSQL 16.x' issue.
     image: timescale/timescaledb:2.11.0-pg15
     container_name: cw_timescaledb
     environment:

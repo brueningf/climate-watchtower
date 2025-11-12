@@ -8,10 +8,8 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile({"dev", "seed", "local"}) // only auto-declare in development/seed/local runs
 public class RabbitConfig {
 
     // default queue used by the seeder and listener
@@ -46,4 +44,3 @@ public class RabbitConfig {
         return new RabbitAdmin(connectionFactory);
     }
 }
-

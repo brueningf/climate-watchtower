@@ -16,7 +16,7 @@ This is a single Java (Spring Boot) application that demonstrates building scala
 | Component | Technology | Purpose |
 |---|---|---|
 | Backend core | Java 21, Spring Boot | Main application and processing logic |
-| Audit ledger | ScyllaDB / Cassandra | High-write throughput, immutable event ledger |
+| Audit ledger | ScyllaDB | High-write throughput, immutable event ledger |
 | Result store | MySQL / MariaDB | Structured, transactional storage for alerts and configuration |
 | Messaging | RabbitMQ | Reliable queueing and decoupling between producers and consumers |
 | Security | Spring Security | Secures API access |
