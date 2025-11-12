@@ -1,11 +1,11 @@
 Goal: Build a functioning prototype of the Weather Anomaly Auditor with event-driven architecture.
 
 Phase 1 — Backend foundation
-- Initialize a Spring Boot project (Java 21, Gradle, Web, AMQP, JPA, Security).
-- Create a docker-compose.yml with: RabbitMQ, ScyllaDB (Scylla), MySQL/MariaDB.
+- Initialize a Spring Boot project (Java 21, Gradle, Web, AMQP, JPA, Security). (done)
+- Create a docker-compose.yml with: RabbitMQ, Timescale (Postgres). (done - docker-compose includes RabbitMQ and TimescaleDB)
 - Implement modules:
-  - ingestion → RabbitMQ listener to consume weather events (JSON payloads)
-  - audit → Timescaledb repository to store immutable JSON events
+  - ingestion → RabbitMQ listener to consume weather events (JSON payloads) (done)
+  - audit → Timescaledb repository to store immutable JSON events (done)
   - processing → simple anomaly detection comparing values to configured thresholds
   - alerts → RabbitMQ producer sending anomaly messages to an alert queue
   - results → DB persistence for alert summaries (JPA)
@@ -16,13 +16,13 @@ Phase 1 — Backend foundation
   - (Optional) GET /api/audit → Paginated raw event view
 
 Phase 2 — Frontend integration
-- Create frontend/ with Vite + React + TailwindCSS.
+- Create frontend/ with Vite + React + TailwindCSS. (partial - Vite + React present; TailwindCSS not configured)
 - Implement pages:
   - /dashboard — summary and live stats
   - /alerts — anomaly list and filters
   - /audit — raw event explorer
   - /settings — configuration form
-- Add proxy in vite.config.js for /api/* → backend URL.
+- Add proxy in vite.config.js for /api/* → backend URL. (done)
 - Enable production build and static file serving by copying dist to backend resources.
 
 Phase 3 — CI/CD and improvements
@@ -34,4 +34,3 @@ Future enhancements
 - Rule-based anomaly detection engine with configurable thresholds
 - Real-time WebSocket push for live alerts
 - Prometheus metrics export and Grafana dashboards
-

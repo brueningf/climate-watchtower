@@ -1,23 +1,4 @@
 services:
-  mysql:
-    image: mariadb:10.11
-    container_name: cw_mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: watchman
-      MYSQL_USER: watchman
-      MYSQL_PASSWORD: watchmanpass
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-
   rabbitmq:
     image: rabbitmq:3.11-management
     container_name: cw_rabbitmq
@@ -56,7 +37,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  mysql_data:
   rabbitmq_data:
   timescale_data:
 
