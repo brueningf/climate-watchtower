@@ -8,7 +8,7 @@ Phase 1 — Backend foundation
   - audit → Timescaledb repository to store immutable JSON events
   - processing → simple anomaly detection comparing values to configured thresholds
   - alerts → RabbitMQ producer sending anomaly messages to an alert queue
-  - results → MySQL persistence for alert summaries (JPA)
+  - results → DB persistence for alert summaries (JPA)
   - security → Spring Security config (Basic Auth for prototype; JWT optional)
 - Expose REST endpoints:
   - GET /api/alerts → Retrieve stored alerts
