@@ -36,31 +36,31 @@ services:
       retries: 5
     restart: unless-stopped
 
-  cassandra:
-    image: cassandra:4.1
-    container_name: cw_cassandra
-    ports:
-      - "9042:9042"
-    volumes:
-      - cassandra_data:/var/lib/cassandra
+  timescaledb:
+    # Use a Timescale image based on PostgreSQL 15 to ensure compatibility with the Flyway version
+    # currently pinned in build.gradle. This avoids the 'Unsupported Database: PostgreSQL 16.x' issue.
+    image: timescale/timescaledb:2.11.0-pg15
+    container_name: cw_timescaledb
     environment:
-      CASSANDRA_START_RPC: 'true'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: watchman_audit
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ./docker/init-timescale:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD", "cqlsh", "-e", "describe cluster"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d watchman_audit"]
       interval: 10s
-      timeout: 10s
+      timeout: 5s
       retries: 10
     restart: unless-stopped
 
 volumes:
   mysql_data:
   rabbitmq_data:
-  cassandra_data:
+  timescale_data:
 
 # Notes:
 # - Default credentials above are for local development only. Do NOT use them in production.
-# - If you prefer Cassandra-compatible ScyllaDB, replace the cassandra service image with scylladb/scylla and adjust ports/healthchecks.
-# - To start services (requires Docker):
-#     docker compose up -d
-# - To stop and remove containers/volumes:
-#     docker compose down -v
