@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.config;
+package com.audit.climate.watchtower.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

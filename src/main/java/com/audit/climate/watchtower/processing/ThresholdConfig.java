@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.processing;
+package com.audit.climate.watchtower.processing;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;

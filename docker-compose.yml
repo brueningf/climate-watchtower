@@ -23,14 +23,14 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: watchman_audit
+      POSTGRES_DB: watchtower_audit
     ports:
       - "5432:5432"
     volumes:
       - timescale_data:/var/lib/postgresql/data
       - ./docker/init-timescale:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d watchman_audit"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d watchtower_audit"]
       interval: 10s
       timeout: 5s
       retries: 10

@@ -1,9 +1,9 @@
-package com.audit.climate.watchman.processing;
+package com.audit.climate.watchtower.processing;
 
-import com.audit.climate.watchman.alerts.Alert;
-import com.audit.climate.watchman.alerts.AlertRepository;
-import com.audit.climate.watchman.config.RabbitConfig;
-import com.audit.climate.watchman.ingest.WeatherEvent;
+import com.audit.climate.watchtower.alerts.Alert;
+import com.audit.climate.watchtower.alerts.AlertRepository;
+import com.audit.climate.watchtower.config.RabbitConfig;
+import com.audit.climate.watchtower.ingest.WeatherEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

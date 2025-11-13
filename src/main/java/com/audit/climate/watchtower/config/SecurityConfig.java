@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.config;
+package com.audit.climate.watchtower.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Keep security enabled but allow HTTP Basic for API endpoints used by tests
-        // Permit unauthenticated access to OpenAPI/Swagger UI endpoints
+        // Permit unauthenticated access to OpenAPI/Swagger UI endpoints and static root
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
@@ -19,7 +19,12 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/api/**"
+                                "/api/**",
+                                "/",
+                                "/index.html",
+                                "/favicon.ico",
+                                "/swagger-resources/**",
+                                "/webjars/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

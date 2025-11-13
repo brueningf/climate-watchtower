@@ -1,7 +1,7 @@
-package com.audit.climate.watchman.ingest;
+package com.audit.climate.watchtower.ingest;
 
-import com.audit.climate.watchman.audit.AuditService;
-import com.audit.climate.watchman.config.RabbitConfig;
+import com.audit.climate.watchtower.audit.AuditService;
+import com.audit.climate.watchtower.config.RabbitConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

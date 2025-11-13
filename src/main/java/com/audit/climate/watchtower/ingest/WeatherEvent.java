@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.ingest;
+package com.audit.climate.watchtower.ingest;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

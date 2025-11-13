@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.seed;
+package com.audit.climate.watchtower.seed;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

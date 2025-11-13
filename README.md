@@ -1,4 +1,4 @@
-# Weather Anomaly Auditor — Event-Driven Processing Engine
+# Weather Anomaly Auditor — Event-Driven Processing Engine (Climate Watchtower)
 
 ## Project focus
 
@@ -51,9 +51,3 @@ III. System security and data integrity
 ## Frontend (optional)
 
 This repository may contain a separate `frontend/` folder with a Vite + React app. During development, the Vite dev server can proxy API requests to the Spring Boot backend. To build the frontend for production, run the build script inside `frontend/` and copy the `dist` output into `src/main/resources/static` if you want Spring Boot to serve the static files.
-
-## Next steps and suggestions
-
-- Add a Gradle task that runs the frontend build and copies output into the backend resources during the Java build.
-- Add CI workflows to build and test both frontend and backend artifacts.
-- Document the required environment variables and Docker Compose configuration for local development and testing.

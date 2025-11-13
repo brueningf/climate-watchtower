@@ -1,4 +1,4 @@
-package com.audit.climate.watchman;
+package com.audit.climate.watchtower;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +32,7 @@ public class ThresholdsRestIntegrationTest {
         DockerImageName image = DockerImageName.parse("timescale/timescaledb:2.9.0-pg15")
                 .asCompatibleSubstituteFor("postgres");
         postgres = new PostgreSQLContainer<>(image)
-                .withDatabaseName("watchman_audit")
+                .withDatabaseName("watchtower_audit")
                 .withUsername("postgres")
                 .withPassword("postgres");
     }

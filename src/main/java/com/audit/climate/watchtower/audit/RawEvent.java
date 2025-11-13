@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.audit;
+package com.audit.climate.watchtower.audit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

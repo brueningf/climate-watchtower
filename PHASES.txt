@@ -6,31 +6,43 @@ Phase 1 — Backend foundation
 - Implement modules:
   - ingestion → RabbitMQ listener to consume weather events (JSON payloads) (done)
   - audit → TimescaleDB repository to store immutable JSON events (done)
-  - processing → simple anomaly detection comparing values to configured thresholds
-  - alerts → RabbitMQ producer sending anomaly messages to an alert queue
-  - results → DB persistence for alert summaries (JPA)
-  - security → Spring Security config (Basic Auth for prototype; JWT optional)
+  - processing → simple anomaly detection comparing values to configured thresholds (in progress / core implemented)
+  - alerts → RabbitMQ producer sending anomaly messages to an alert queue (done)
+  - results → DB persistence for alert summaries (JPA) (scaffolded)
+  - security → Spring Security config (Basic Auth for prototype; JWT optional) (done - Basic Auth enabled)
 - Expose REST endpoints:
-  - GET /api/alerts → Retrieve stored alerts
-  - POST /api/config → Update anomaly detection thresholds
-  - (Optional) GET /api/audit → Paginated raw event view
+  - GET /api/alerts → Retrieve stored alerts (implemented)
+  - POST /api/thresholds → Update anomaly detection thresholds (implemented)
+  - GET /api/audit → Paginated raw event view (TODO)
+
+- Small security wiring for tests: added `SecurityConfig` to enable HTTP Basic and disable CSRF for API endpoints so tests can POST/DELETE without CSRF tokens. (This is a test-friendly setup — adjust for production if needed.)
 
 Phase 2 — Frontend integration
 - Create frontend/ with Vite + React + TailwindCSS. (partial - Vite + React present; TailwindCSS not configured)
 - Implement pages:
-  - /dashboard — summary and live stats
-  - /alerts — anomaly list and filters
-  - /audit — raw event explorer
-  - /settings — configuration form
+  - /dashboard — summary and live stats (TODO)
+  - /alerts — anomaly list and filters (TODO)
+  - /audit — raw event explorer (TODO)
+  - /settings — configuration form (TODO)
 - Add proxy in vite.config.js for /api/* → backend URL. (done)
-- Enable production build and static file serving by copying dist to backend resources.
+- Enable production build and static file serving by copying dist to backend resources. (TODO)
 
 Phase 3 — CI/CD and improvements
-- Add Gradle task to build frontend automatically and copy artifacts.
-- Add CI (GitHub Actions or similar) to run tests and build Docker image.
-- Add integration tests for event flow: Publish test event → detect anomaly → verify alert persisted.
+- Add Gradle task to build frontend automatically and copy artifacts. (TODO)
+- Add CI (GitHub Actions or similar) to run tests and build Docker image. (TODO)
+- Add integration tests for full event flow: Publish test event → detect anomaly → verify alert persisted. (partial — there is an existing `ThresholdsIntegrationTest` that validates alert creation when thresholds are set; could be extended)
 
-Future enhancements
-- Rule-based anomaly detection engine with configurable thresholds
-- Real-time WebSocket push for live alerts
-- Prometheus metrics export and Grafana dashboards
+Immediate next steps (recommended)
+- Finish `GET /api/audit` (paginated raw event explorer) and wire frontend pages to it.
+- Harden API validation and error responses (use DTOs + Jakarta Validation annotations and a ControllerAdvice for consistent error bodies).
+- Move test-friendly security settings behind a test profile or conditional bean so production config remains stricter (CSRF enabled / different auth).
+- Add unit tests for controller logic (happy path + validation failure) and repository tests where useful.
+- Add a Gradle task to build the frontend (npm/yarn) and copy dist into `src/main/resources/static` during `processResources`.
+- Add a small README section documenting how to run tests (Testcontainers require Docker) and local development steps.
+
+Longer-term improvements
+- Replace Basic Auth with JWT/OAuth2 for production scenarios.
+- Add a rules engine for flexible anomaly detection (e.g., support multi-metric rules, rate-based alerts).
+- Add metrics + monitoring (Prometheus + Grafana) and WebSocket push for real-time UI updates.
+
+Status: active — core backend components implemented and tested; next focus is frontend integration, UX, and CI automation.

@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.config;
+package com.audit.climate.watchtower.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

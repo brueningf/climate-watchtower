@@ -1,9 +1,9 @@
-package com.audit.climate.watchman;
+package com.audit.climate.watchtower;
 
-import com.audit.climate.watchman.alerts.Alert;
-import com.audit.climate.watchman.alerts.AlertRepository;
-import com.audit.climate.watchman.processing.ThresholdConfig;
-import com.audit.climate.watchman.processing.ThresholdRepository;
+import com.audit.climate.watchtower.alerts.Alert;
+import com.audit.climate.watchtower.alerts.AlertRepository;
+import com.audit.climate.watchtower.processing.ThresholdConfig;
+import com.audit.climate.watchtower.processing.ThresholdRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +38,7 @@ public class ThresholdsIntegrationTest {
         DockerImageName image = DockerImageName.parse("timescale/timescaledb:2.9.0-pg15")
                 .asCompatibleSubstituteFor("postgres");
         postgres = new PostgreSQLContainer<>(image)
-                .withDatabaseName("watchman_audit")
+                .withDatabaseName("watchtower_audit")
                 .withUsername("postgres")
                 .withPassword("postgres");
     }

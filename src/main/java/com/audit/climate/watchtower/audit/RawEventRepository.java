@@ -1,4 +1,4 @@
-package com.audit.climate.watchman.alerts;
+package com.audit.climate.watchtower.audit;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface AlertRepository extends JpaRepository<Alert, UUID> {
+public interface RawEventRepository extends JpaRepository<RawEvent, UUID> {
 }
