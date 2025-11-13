@@ -18,6 +18,10 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+    mockitoAgent
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.postgresql:postgresql'
@@ -29,8 +33,20 @@ dependencies {
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Testcontainers for integration tests
+	testImplementation 'org.testcontainers:junit-jupiter:1.19.1'
+	testImplementation 'org.testcontainers:postgresql:1.19.1'
+	testImplementation 'org.testcontainers:rabbitmq:1.19.1'
+
+	// Mockito as test dependency and javaagent
+	testImplementation 'org.mockito:mockito-core'
+	mockitoAgent('org.mockito:mockito-core') { transitive = false }
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+// Apply configuration to all Test tasks
+tasks.withType(Test) {
+    useJUnitPlatform()
+    jvmArgs += ['-XX:+EnableDynamicAgentLoading']
+    jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
 }
