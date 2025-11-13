@@ -51,6 +51,10 @@ public class ThresholdsRestIntegrationTest {
         reg.add("spring.rabbitmq.port", () -> rabbit.getAmqpPort());
         reg.add("spring.rabbitmq.username", rabbit::getAdminUsername);
         reg.add("spring.rabbitmq.password", rabbit::getAdminPassword);
+
+        // expose a fixed test user so TestRestTemplate can authenticate
+        reg.add("spring.security.user.name", () -> "test");
+        reg.add("spring.security.user.password", () -> "test");
     }
 
     @Autowired
@@ -68,11 +72,13 @@ public class ThresholdsRestIntegrationTest {
                 "max", 5.0
         );
 
-        ResponseEntity<Void> created = restTemplate.postForEntity("/api/thresholds", body, Void.class);
+        ResponseEntity<Void> created = restTemplate.withBasicAuth("test", "test")
+                .postForEntity("/api/thresholds", body, Void.class);
         Assertions.assertEquals(201, created.getStatusCodeValue());
 
         // Get
-        ResponseEntity<ThresholdDto> get = restTemplate.getForEntity("/api/thresholds?module=rest-test&metric=temperature", ThresholdDto.class);
+        ResponseEntity<ThresholdDto> get = restTemplate.withBasicAuth("test", "test")
+                .getForEntity("/api/thresholds?module=rest-test&metric=temperature", ThresholdDto.class);
         Assertions.assertEquals(200, get.getStatusCodeValue());
         Assertions.assertNotNull(get.getBody());
         Assertions.assertEquals("rest-test", get.getBody().getModule());
@@ -81,7 +87,8 @@ public class ThresholdsRestIntegrationTest {
         Assertions.assertEquals(5.0, get.getBody().getMax());
 
         // List
-        ResponseEntity<ThresholdDto[]> list = restTemplate.getForEntity("/api/thresholds", ThresholdDto[].class);
+        ResponseEntity<ThresholdDto[]> list = restTemplate.withBasicAuth("test", "test")
+                .getForEntity("/api/thresholds", ThresholdDto[].class);
         Assertions.assertEquals(200, list.getStatusCodeValue());
         Assertions.assertNotNull(list.getBody());
         boolean found = Arrays.stream(list.getBody())
@@ -95,12 +102,15 @@ public class ThresholdsRestIntegrationTest {
                 "min", 10.0,
                 "max", 1.0
         );
-        ResponseEntity<String> badResp = restTemplate.postForEntity("/api/thresholds", bad, String.class);
+        ResponseEntity<String> badResp = restTemplate.withBasicAuth("test", "test")
+                .postForEntity("/api/thresholds", bad, String.class);
         Assertions.assertEquals(400, badResp.getStatusCodeValue());
 
         // Delete
-        restTemplate.delete("/api/thresholds?module=rest-test&metric=temperature");
-        ResponseEntity<ThresholdDto> afterDelete = restTemplate.getForEntity("/api/thresholds?module=rest-test&metric=temperature", ThresholdDto.class);
+        restTemplate.withBasicAuth("test", "test")
+                .delete("/api/thresholds?module=rest-test&metric=temperature");
+        ResponseEntity<ThresholdDto> afterDelete = restTemplate.withBasicAuth("test", "test")
+                .getForEntity("/api/thresholds?module=rest-test&metric=temperature", ThresholdDto.class);
         Assertions.assertEquals(404, afterDelete.getStatusCodeValue());
     }
 
@@ -122,4 +132,3 @@ public class ThresholdsRestIntegrationTest {
         public void setMax(Double max) { this.max = max; }
     }
 }
-

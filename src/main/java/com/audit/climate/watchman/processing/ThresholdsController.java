@@ -38,6 +38,9 @@ public class ThresholdsController {
         if (req.getModule() == null || req.getMetric() == null) {
             return ResponseEntity.badRequest().body("module and metric are required");
         }
+        if (req.getMin() != null && req.getMax() != null && req.getMin() > req.getMax()) {
+            return ResponseEntity.badRequest().body("min must be <= max");
+        }
         config.setThreshold(req.getModule(), req.getMetric(), req.getMin(), req.getMax());
         // Return location of resource (convention)
         URI location = URI.create(String.format("/api/thresholds?module=%s&metric=%s", req.getModule(), req.getMetric()));
@@ -90,4 +93,3 @@ public class ThresholdsController {
         public Double getMax() { return max; }
     }
 }
-

@@ -10,16 +10,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Keep security enabled but allow HTTP Basic and disable CSRF for API endpoints used by tests
+        // Keep security enabled but allow HTTP Basic for API endpoints used by tests
+        // Permit unauthenticated access to OpenAPI/Swagger UI endpoints
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/api/**"
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic();
 
         return http.build();
     }
 }
-
