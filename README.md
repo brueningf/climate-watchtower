@@ -1,49 +1,56 @@
-# Weather Anomaly Auditor — Event-Driven Processing Engine (Climate Watchtower)
+# Climate Watchtower / Weather Anomaly Auditor
 
-## Project focus
+I’m building a distributed network of sensor modules (starting with weather). I wanted a system that can do two things for me:
 
-This is a single Java (Spring Boot) application that demonstrates building scalable, reliable, and auditable event processing pipelines. The project showcases patterns commonly required for high-throughput applications such as guaranteed delivery, consolidated persistence on TimescaleDB/Postgres, and secured API access.
+1. Alert me when climate conditions shift suddenly.
+2. Give me a trace of where a problem originates if something looks off.
 
-## Value proposition
+This project is the processing and auditing engine for that. It watches real-time events coming in through RabbitMQ and keeps an immutable record so I can go back and see what happened and when.
 
-- Guaranteed delivery of incoming events using RabbitMQ.
-- Consolidated persistence using PostgreSQL/TimescaleDB for both the immutable audit ledger and structured results.
-- Application-layer security using Spring Security for API endpoints.
-- Event-driven architecture with clear separation of ingestion, processing, and storage.
+## What it does right now
 
-## Technical stack
+- Listens to weather events from my sensor network (more sources coming later).
+- Stores raw JSON events in a time-series database (TimescaleDB/Postgres) like an audit log I don’t mutate.
+- Evaluates incoming data against thresholds to decide if something is an anomaly.
+- Publishes alert messages when it detects those anomalies.
+- Exposes secured API endpoints so I can query alerts.
 
-| Component | Technology | Purpose |
-|---|---|---|
-| Backend core | Java 21, Spring Boot | Main application and processing logic |
-| Audit ledger & results | PostgreSQL / TimescaleDB | Time-series audit ledger and structured result storage |
-| Messaging | RabbitMQ | Reliable queueing and decoupling between producers and consumers |
-| Security | Spring Security | Secures API access |
-| DevOps | Docker Compose / Linux | Reproducible local multi-service environment |
+Example: it can tell me something like “this week’s average temperature is down ~3°C compared to last week.” That kind of simple comparative insight will expand as I feed it more data types.
 
-## Architectural flow and key features
+## Where it’s going next
 
-I. Data ingestion and auditing
+- I’ll gradually plug in new sensor types as I expand the network (humidity, pressure, wind, air quality, etc.).
+- I’ll enrich the local sensor data with external climate APIs to tighten the quality of warnings.
+- I’ll add health and heartbeat events from the remote nodes. Those will increase event volume.
+- I plan to use a Phi accrual failure detection style approach to tell me if a node is failing, delaying, or dead.
+- More derived metrics: week-over-week deltas, rolling volatility, gap detection, maybe seasonal baselines.
 
-- Reliable consumption: a multi-threaded RabbitMQ consumer reads raw events from a queue.
-- Immutable write: the raw event JSON is persisted to TimescaleDB as a durable record.
+## Tech
 
-II. Real-time anomaly processing
+- Language: Java 21 + Spring Boot
+- Messaging: RabbitMQ
+- Storage: PostgreSQL / TimescaleDB (raw ledger + structured results)
+- Security: Spring Security (lock down endpoints like `/api/alerts`)
+- Local dev: Docker Compose (RabbitMQ + DB)
 
-- Business logic detects anomalies by evaluating incoming event data against configured thresholds.
-- Decoupled alerting: anomalies generate alert messages sent to a separate queue for review and further processing.
+## Running it (dev)
 
-III. System security and data integrity
+Make sure RabbitMQ and Postgres/TimescaleDB are running (use Docker Compose or your own instances).
 
-- Result processing: a consumer reads from the alert queue and stores structured alert records in PostgreSQL/TimescaleDB.
-- Secured API access: REST endpoints (for example, `/api/alerts`) are protected using Spring Security so only authenticated clients can query results.
+```bash
+# from repository root
+./gradlew bootRun
+```
 
-## Getting started (development)
+Then hit the API (secured) once you have credentials set up.
 
-1. Start backend services required by the app (RabbitMQ, TimescaleDB). Use Docker Compose or local services as appropriate.
-2. Build and run the Spring Boot application with Gradle:
+## Why an audit ledger?
 
-   ```bash
-   # from repository root
-   ./gradlew bootRun
-   ```
+I don’t want to lose raw sensor input or silently patch history. If something goes wrong I need to trace back through exactly what the system saw. That’s why raw events are written immutably and alerts are a separate structured view.
+
+## Future notes
+
+As heartbeat data flows in, load will increase. I’ll tune consumers and queue settings, maybe add backpressure or dead-letter flows if needed. Scaling will be iterative based on what the real sensor traffic looks like, not theoretical charts.
+
+---
+This is a living project. I’ll keep shaping it as the sensor network grows.
