@@ -47,7 +47,3 @@ III. System security and data integrity
    # from repository root
    ./gradlew bootRun
    ```
-
-## Frontend (optional)
-
-This repository may contain a separate `frontend/` folder with a Vite + React app. During development, the Vite dev server can proxy API requests to the Spring Boot backend. To build the frontend for production, run the build script inside `frontend/` and copy the `dist` output into `src/main/resources/static` if you want Spring Boot to serve the static files.
