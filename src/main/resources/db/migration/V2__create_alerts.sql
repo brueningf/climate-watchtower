@@ -1,14 +1,15 @@
 -- Flyway migration to create alerts table
 
 CREATE TABLE IF NOT EXISTS alerts (
-  id UUID PRIMARY KEY,
+  id UUID NOT NULL,
   occurred_at timestamptz NOT NULL,
   module text NOT NULL,
   metric text NOT NULL,
   value double precision NOT NULL,
   threshold_min double precision,
   threshold_max double precision,
-  description text
+  description text,
+  PRIMARY KEY (id, occurred_at)
 );
 
 -- make hypertable if Timescale available
@@ -18,4 +19,3 @@ BEGIN
     PERFORM create_hypertable('alerts', 'occurred_at', if_not_exists => TRUE);
   END IF;
 END$$;
-
