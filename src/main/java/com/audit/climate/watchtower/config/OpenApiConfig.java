@@ -13,7 +13,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .components(new Components())
-                .info(new Info().title("Climate Watchman Auditor API").version("v0.0.1"));
+                .info(new Info().title("Climate Watchtower API").version("v0.0.1"));
     }
 }
 

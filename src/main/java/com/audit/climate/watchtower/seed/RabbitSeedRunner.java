@@ -9,6 +9,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.amqp.AmqpApplicationContextClosedException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -46,6 +48,10 @@ public class RabbitSeedRunner {
 
     private String[] modulesArray;
 
+    // Flag and thread reference so we can stop cleanly on context shutdown
+    private volatile boolean running = true;
+    private Thread workerThread;
+
     public RabbitSeedRunner(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
@@ -69,7 +75,7 @@ public class RabbitSeedRunner {
                 }
 
                 long sent = 0L;
-                while (!Thread.currentThread().isInterrupted()) {
+                while (running && !Thread.currentThread().isInterrupted()) {
                     sendOne(sent + 1);
                     sent++;
                     if (sent % 10 == 0) log.info("Sent {} messages (continuous mode)", sent);
@@ -86,11 +92,22 @@ public class RabbitSeedRunner {
             }
         }, "seed-runner-thread");
         t.setDaemon(true);
+        this.workerThread = t;
         t.start();
+    }
+
+    @EventListener
+    public void onContextClosed(ContextClosedEvent event) {
+        log.info("ContextClosedEvent received — stopping seeder background thread.");
+        running = false;
+        if (workerThread != null && workerThread.isAlive()) {
+            workerThread.interrupt();
+        }
     }
 
     private void sendCount(int cnt) {
         for (int i = 0; i < cnt; i++) {
+            if (!running) break;
             sendOne(i + 1);
             if ((i + 1) % 10 == 0) log.info("Sent {} messages", i + 1);
             try {
@@ -125,7 +142,13 @@ public class RabbitSeedRunner {
                 rabbitTemplate.convertAndSend(exchange, routingKey, payload);
             }
         } catch (Exception ex) {
-            log.error("Failed to send message", ex);
+            // When the ApplicationContext is closing, RabbitTemplate may throw
+            // AmqpApplicationContextClosedException; treat that as an expected shutdown event
+            if (ex instanceof AmqpApplicationContextClosedException) {
+                log.debug("Skipping send after application context closed: {}", ex.toString());
+            } else {
+                log.error("Failed to send message", ex);
+            }
         }
     }
 }
