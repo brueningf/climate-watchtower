@@ -1,4 +1,4 @@
-# Climate Watchtower / Weather Anomaly Auditor
+# Climate Watchtower
 
 I’m building a distributed network of sensor modules (starting with weather). I wanted a system that can do two things for me:
 
