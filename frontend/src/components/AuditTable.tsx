@@ -3,10 +3,13 @@ import { useEffect, useState } from 'react'
 type AuditItem = {
   id: string | number
   receivedAt?: string
+  channel?: string
   module?: string
   temperature?: number | string
   humidity?: number | string
   pressure?: number | string
+  // keep any other fields that may be returned (classification/raw) available via index signature
+  [key: string]: any
 }
 
 type AuditResponse = {
@@ -22,6 +25,7 @@ export default function AuditTable() {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(20)
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     async function load() {
@@ -61,6 +65,10 @@ export default function AuditTable() {
     setPage(0)
   }
 
+  const toggleRow = (id: string | number) => {
+    setExpanded((prev) => ({ ...prev, [String(id)]: !prev[String(id)] }))
+  }
+
   // render up to 7 page buttons around current page
   const renderPageButtons = () => {
     if (!data) return null
@@ -98,21 +106,42 @@ export default function AuditTable() {
           <thead className="bg-slate-50">
             <tr>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Received At</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Channel</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Module</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Temp</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Humidity</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Pressure</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Details</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-slate-100">
             {data.items.map((item) => (
-              <tr key={item.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-700">{item.receivedAt}</td>
-                <td className="px-4 py-3 text-sm text-slate-700">{item.module}</td>
-                <td className="px-4 py-3 text-sm text-slate-700">{item.temperature}</td>
-                <td className="px-4 py-3 text-sm text-slate-700">{item.humidity}</td>
-                <td className="px-4 py-3 text-sm text-slate-700">{item.pressure}</td>
-              </tr>
+              <>
+                <tr key={item.id} className="hover:bg-slate-50">
+                  <td className="px-4 py-3 text-sm text-slate-700">{item.receivedAt ?? '-'}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{item.channel ?? '-'}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{item.module ?? '-'}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{item.temperature ?? '-'}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{item.humidity ?? '-'}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">{item.pressure ?? '-'}</td>
+                  <td className="px-4 py-3 text-sm text-slate-700">
+                    <button
+                      onClick={() => toggleRow(item.id)}
+                      className="px-2 py-1 bg-slate-100 rounded-md text-sm text-slate-700 hover:bg-slate-200"
+                    >
+                      {expanded[String(item.id)] ? 'Hide' : 'Show'}
+                    </button>
+                  </td>
+                </tr>
+
+                {expanded[String(item.id)] && (
+                  <tr key={`${item.id}-details`} className="bg-slate-50">
+                    <td colSpan={7} className="px-4 py-3 text-sm text-slate-700 font-mono whitespace-pre-wrap">
+                      {JSON.stringify(item, null, 2)}
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
