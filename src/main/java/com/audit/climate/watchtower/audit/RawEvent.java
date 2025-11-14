@@ -18,68 +18,29 @@ public class RawEvent {
     @Column(name = "received_at", nullable = false)
     private Instant receivedAt;
 
-    @Column(name = "module", nullable = false)
-    private String module;
+    // original raw payload stored verbatim as text (JSON string)
+    @Column(name = "payload", columnDefinition = "text", nullable = false)
+    private String payload;
 
-    @Column(name = "temperature", nullable = false)
-    private double temperature;
-
-    @Column(name = "humidity", nullable = false)
-    private double humidity;
-
-    @Column(name = "pressure", nullable = false)
-    private double pressure;
+    // classification/normalized metadata stored as text (JSON string)
+    @Column(name = "classification", columnDefinition = "text")
+    private String classification;
 
     public RawEvent() {
         this.id = UUID.randomUUID();
         this.receivedAt = Instant.now();
     }
 
-    public RawEvent(String module, double temperature, double humidity, double pressure) {
+    public RawEvent(String payload) {
         this();
-        this.module = module;
-        this.temperature = temperature;
-        this.humidity = humidity;
-        this.pressure = pressure;
+        this.payload = payload;
     }
 
-    public UUID getId() {
-        return id;
-    }
+    public UUID getId() { return id; }
+    public Instant getReceivedAt() { return receivedAt; }
+    public String getPayload() { return payload; }
+    public String getClassification() { return classification; }
 
-    public Instant getReceivedAt() {
-        return receivedAt;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public double getTemperature() {
-        return temperature;
-    }
-
-    public double getHumidity() {
-        return humidity;
-    }
-
-    public double getPressure() {
-        return pressure;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
-    }
-
-    public void setHumidity(double humidity) {
-        this.humidity = humidity;
-    }
-
-    public void setPressure(double pressure) {
-        this.pressure = pressure;
-    }
+    public void setPayload(String payload) { this.payload = payload; }
+    public void setClassification(String classification) { this.classification = classification; }
 }

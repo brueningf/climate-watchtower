@@ -42,7 +42,8 @@ public class TimescaleInitializer {
             jdbc.execute("CREATE TABLE IF NOT EXISTS raw_events (\n"
                     + "  id UUID PRIMARY KEY,\n"
                     + "  received_at timestamptz NOT NULL,\n"
-                    + "  payload jsonb NOT NULL\n"
+                    + "  payload text NOT NULL,\n"
+                    + "  classification text\n"
                     + ");");
 
             if (!hasTimescale) {
