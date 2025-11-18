@@ -1,5 +1,3 @@
--- Flyway migration to create thresholds table
-
 CREATE TABLE IF NOT EXISTS thresholds (
   id UUID PRIMARY KEY,
   module text NOT NULL,

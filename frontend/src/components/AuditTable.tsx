@@ -4,15 +4,12 @@ type AuditItem = {
   id: string | number
   receivedAt?: string
   channel?: string
-  module?: string
   temperature?: number | string
   humidity?: number | string
   pressure?: number | string
+}
   // keep any other fields that may be returned (classification/raw) available via index signature
   [key: string]: any
-}
-
-type AuditResponse = {
   items: AuditItem[]
   page: number
   totalPages: number
@@ -25,11 +22,10 @@ export default function AuditTable() {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(20)
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     async function load() {
-      try {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
         setLoading(true)
         setError(null)
         const res = await fetch(`/api/audit?page=${page}&size=${size}`)
@@ -65,18 +61,14 @@ export default function AuditTable() {
     setPage(0)
   }
 
-  const toggleRow = (id: string | number) => {
-    setExpanded((prev) => ({ ...prev, [String(id)]: !prev[String(id)] }))
-  }
-
   // render up to 7 page buttons around current page
   const renderPageButtons = () => {
     if (!data) return null
     const total = data.totalPages
-    if (total <= 1) return null
+  const toggleRow = (id: string | number) => {
+    setExpanded((prev) => ({ ...prev, [String(id)]: !prev[String(id)] }))
+  }
 
-    const maxButtons = 7
-    let start = Math.max(0, page - Math.floor(maxButtons / 2))
     let end = start + maxButtons
     if (end > total) {
       end = total
@@ -106,16 +98,24 @@ export default function AuditTable() {
           <thead className="bg-slate-50">
             <tr>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Received At</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Channel</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Module</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Temp</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Humidity</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Pressure</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Details</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-slate-100">
             {data.items.map((item) => (
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Channel</th>
+                <td className="px-4 py-3 text-sm text-slate-700">{item.receivedAt}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">{item.module}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">{item.temperature}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">{item.humidity}</td>
+              <th className="px-4 py-3 text-left text-sm font-medium text-slate-700">Details</th>
+              </tr>
+            ))}
+          </tbody>
+        </table>
               <>
                 <tr key={item.id} className="hover:bg-slate-50">
                   <td className="px-4 py-3 text-sm text-slate-700">{item.receivedAt ?? '-'}</td>
@@ -142,35 +142,6 @@ export default function AuditTable() {
                   </tr>
                 )}
               </>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="mt-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <button
-            onClick={prevPage}
-            disabled={page <= 0 || loading}
-            className="px-3 py-1 rounded-md mr-2 text-sm bg-slate-100 text-slate-700 disabled:opacity-50"
-          >
-            Previous
-          </button>
-
-          <div className="flex items-center">{renderPageButtons()}</div>
-
-          <button
-            onClick={nextPage}
-            disabled={!data || page + 1 >= data.totalPages || loading}
-            className="px-3 py-1 rounded-md ml-2 text-sm bg-slate-100 text-slate-700 disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <div className="text-sm text-slate-600">Page {data.page + 1} of {data.totalPages} — {data.totalElements} total</div>
-
           <label className="text-sm text-slate-600">Show
             <select
               value={size}
